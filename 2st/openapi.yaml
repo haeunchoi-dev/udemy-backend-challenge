@@ -1,0 +1,436 @@
+openapi: 3.0.0
+info:
+  title: Book CRUD API
+  version: 1.0.0
+  description: A simple CRUD API for managing book information
+
+paths:
+  /books:
+    post:
+      summary: Create a new book
+      tags:
+        - Books
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 책 이름
+                  example: "유데미 백엔드 챌린지"
+                author:
+                  type: string
+                  description: 저자
+                  example: "최하은"
+                publishedDate:
+                  type: string
+                  description: 출판일
+                  pattern: "^[0-9]{4}[0-1][0-9][0-3][0-9]$"
+                  example: "20240929"
+                publisher:
+                  type: string
+                  description: 출판사
+                  example: "Udemy"
+                price:
+                  type: number
+                  description: 가격
+                  example: 10000
+                genre:
+                  type: string
+                  description: 책 장르
+                  example: "IT"
+                description:
+                  type: string
+                  description: 책 설명
+                  example: "CRUD API 예제"
+              required:
+                - title
+                - author
+      responses:
+        201:
+          description: Book successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 201
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+                      title:
+                        type: string
+                        example: "유데미 백엔드 챌린지"
+                      author:
+                        type: string
+                        example: "최하은"
+                      publishedDate:
+                        type: string
+                        example: "20240929"
+                      publisher:
+                        type: string
+                        example: "Udemy"
+                      price:
+                        type: number
+                        example: 10000
+                      genre:
+                        type: string
+                        example: "IT"
+                      description:
+                        type: string
+                        example: "CRUD API 예제"
+        400:
+          description: Failed to create book information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "BOOK_CREATION_FAILED"
+                      message:
+                        type: string
+                        example: "Failed to create book information"
+
+    get:
+      summary: Get a list of books
+      tags:
+        - Books
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: number
+            default: 1
+          description: 페이지 번호
+          example: 1
+        - name: size
+          in: query
+          required: true
+          schema:
+            type: number
+            default: 10
+          description: 한 페이지 당 책의 수
+          example: 10
+        - name: sort
+          in: query
+          schema:
+            type: string
+          description: 정렬 기준
+          example: "title"
+        - name: direction
+          in: query
+          schema:
+            type: string
+            default: asc
+          description: 정렬 방향 
+          example: "asc"
+        - name: genre
+          in: query
+          schema:
+            type: string
+          description: 장르 필터링
+          example: "IT"
+      responses:
+        200:
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      books:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            title:
+                              type: string
+                              example: "유데미 백엔드 챌린지"
+                            author:
+                              type: string
+                              example: "최하은"
+                            publishedDate:
+                              type: string
+                              example: "20240929"
+                            publisher:
+                              type: string
+                              example: "Udemy"
+                            price:
+                              type: number
+                              example: 10000
+                            genre:
+                              type: string
+                              example: "IT"
+                            description:
+                              type: string
+                              example: "CRUD API 예제"
+                      page:
+                        type: object
+                        properties:
+                          currentPage:
+                            type: number
+                            example: 1
+                          totalPages:
+                            type: number
+                            example: 1
+                          totalBooks:
+                            type: number
+                            example: 1
+                          pageSize:
+                            type: number
+                            example: 10
+        500:
+          description: Failed to retrieve the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      status:
+                        type: number
+                        example: 500
+                      code:
+                        type: string
+                        example: "LIST_RETRIEVAL_FAILED"
+                      message:
+                        type: string
+                        example: "Failed to retrieve the list"
+
+  /books/{bookId}:
+    get:
+      summary: Get book information by ID
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: number
+          description: 조회할 책의 고유 ID
+          example: 1
+      responses:
+        200:
+          description: Successfully retrieved book information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+                      title:
+                        type: string
+                        example: "유데미 백엔드 챌린지"
+                      author:
+                        type: string
+                        example: "최하은"
+                      publishedDate:
+                        type: string
+                        example: "20240929"
+                      publisher:
+                        type: string
+                        example: "Udemy"
+                      price:
+                        type: number
+                        example: 10000
+                      genre:
+                        type: string
+                        example: "IT"
+                      description:
+                        type: string
+                        example: "CRUD API 예제"
+        404:
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      status:
+                        type: number
+                        example: 404
+                      code:
+                        type: string
+                        example: "BOOK_NOT_FOUND"
+                      message:
+                        type: string
+                        example: "Book not found"
+
+    put:
+      summary: Update book information
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: number
+          description: 갱신할 책의 고유 ID
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "유데미 백엔드 챌린지2"
+                author:
+                  type: string
+                  example: "che"
+                publishedDate:
+                  type: string
+                  example: "20240930"
+                publisher:
+                  type: string
+                  example: "유데미"
+                price:
+                  type: number
+                  example: 20000
+                genre:
+                  type: string
+                  example: "Web"
+                description:
+                  type: string
+                  example: "CRUD API specification"
+      responses:
+        200:
+          description: Successfully updated book information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+                      title:
+                        type: string
+                        example: "유데미 백엔드 챌린지2"
+                      author:
+                        type: string
+                        example: "che"
+                      publishedDate:
+                        type: string
+                        example: "20240930"
+                      publisher:
+                        type: string
+                        example: "유데미"
+                      price:
+                        type: number
+                        example: 20000
+                      genre:
+                        type: string
+                        example: "Web"
+                      description:
+                        type: string
+                        example: "CRUD API specification"
+        400:
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      status:
+                        type: number
+                        example: 400
+                      code:
+                        type: string
+                        example: "BOOK_UPDATE_INVALID_DATA"
+                      message:
+                        type: string
+                        example: "Invalid input data"
+
+    delete:
+      summary: Delete book information
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: number
+          description: 삭제할 책의 고유 ID
+      responses:
+        200:
+          description: Successfully deleted book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+        500:
+          description: Failed to delete book information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      status:
+                        type: number
+                      code:
+                        type: string
+                        example: "BOOK_DELETION_FAILED"
+                      message:
+                        type: string
+                        example: "Failed to delete book information"
