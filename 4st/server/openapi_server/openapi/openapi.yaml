@@ -1,0 +1,685 @@
+openapi: 3.0.0
+info:
+  description: A simple CRUD API for managing book information
+  title: Book CRUD API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+tags:
+- description: CRUD Operations
+  name: Books
+paths:
+  /books:
+    get:
+      operationId: books_get
+      parameters:
+      - description: 페이지 번호
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          default: 1
+          type: number
+        style: form
+      - description: 한 페이지 당 책의 수
+        example: 10
+        explode: true
+        in: query
+        name: size
+        required: true
+        schema:
+          default: 10
+          type: number
+        style: form
+      - description: 정렬 기준
+        example: title
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 정렬 방향
+        example: asc
+        explode: true
+        in: query
+        name: direction
+        required: false
+        schema:
+          default: asc
+          type: string
+        style: form
+      - description: 장르 필터링
+        example: IT
+        explode: true
+        in: query
+        name: genre
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books_get_200_response'
+          description: A list of books
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books_get_500_response'
+          description: Failed to retrieve the list
+      summary: Get a list of books
+      tags:
+      - Books
+      x-openapi-router-controller: openapi_server.controllers.books_controller
+    post:
+      operationId: books_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_books_post_request'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books_post_201_response'
+          description: Book successfully created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books_post_400_response'
+          description: Failed to create book information
+      summary: Create a new book
+      tags:
+      - Books
+      x-openapi-router-controller: openapi_server.controllers.books_controller
+  /books/{bookId}:
+    delete:
+      operationId: books_book_id_delete
+      parameters:
+      - description: 삭제할 책의 고유 ID
+        explode: false
+        in: path
+        name: bookId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__delete_200_response'
+          description: Successfully deleted book
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__delete_500_response'
+          description: Failed to delete book information
+      summary: Delete book information
+      tags:
+      - Books
+      x-openapi-router-controller: openapi_server.controllers.books_controller
+    get:
+      operationId: books_book_id_get
+      parameters:
+      - description: 조회할 책의 고유 ID
+        example: 1
+        explode: false
+        in: path
+        name: bookId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__get_200_response'
+          description: Successfully retrieved book information
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__get_404_response'
+          description: Book not found
+      summary: Get book information by ID
+      tags:
+      - Books
+      x-openapi-router-controller: openapi_server.controllers.books_controller
+    put:
+      operationId: books_book_id_put
+      parameters:
+      - description: 갱신할 책의 고유 ID
+        example: 1
+        explode: false
+        in: path
+        name: bookId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_books__bookId__put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__put_200_response'
+          description: Successfully updated book information
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_books__bookId__put_400_response'
+          description: Invalid input data
+      summary: Update book information
+      tags:
+      - Books
+      x-openapi-router-controller: openapi_server.controllers.books_controller
+components:
+  schemas:
+    _books__bookId__get_404_response_error:
+      example:
+        code: BOOK_NOT_FOUND
+        message: Book not found
+        status: 404
+      properties:
+        status:
+          example: 404
+          title: status
+          type: number
+        code:
+          example: BOOK_NOT_FOUND
+          title: code
+          type: string
+        message:
+          example: Book not found
+          title: message
+          type: string
+      title: _books__bookId__get_404_response_error
+      type: object
+    _books_get_500_response:
+      example:
+        error:
+          code: LIST_RETRIEVAL_FAILED
+          message: Failed to retrieve the list
+          status: 500
+      properties:
+        error:
+          $ref: '#/components/schemas/_books_get_500_response_error'
+      title: _books_get_500_response
+      type: object
+    _books__bookId__delete_500_response_error:
+      example:
+        code: BOOK_DELETION_FAILED
+        message: Failed to delete book information
+        status: 0.8008281904610115
+      properties:
+        status:
+          title: status
+          type: number
+        code:
+          example: BOOK_DELETION_FAILED
+          title: code
+          type: string
+        message:
+          example: Failed to delete book information
+          title: message
+          type: string
+      title: _books__bookId__delete_500_response_error
+      type: object
+    _books__bookId__get_404_response:
+      example:
+        error:
+          code: BOOK_NOT_FOUND
+          message: Book not found
+          status: 404
+      properties:
+        error:
+          $ref: '#/components/schemas/_books__bookId__get_404_response_error'
+      title: _books__bookId__get_404_response
+      type: object
+    _books__bookId__delete_500_response:
+      example:
+        error:
+          code: BOOK_DELETION_FAILED
+          message: Failed to delete book information
+          status: 0.8008281904610115
+      properties:
+        error:
+          $ref: '#/components/schemas/_books__bookId__delete_500_response_error'
+      title: _books__bookId__delete_500_response
+      type: object
+    _books_get_200_response_data:
+      example:
+        books:
+        - author: 최하은
+          price: 10000
+          genre: IT
+          publisher: Udemy
+          description: CRUD API 예제
+          id: 1
+          publishedDate: "20240929"
+          title: 유데미 백엔드 챌린지
+        - author: 최하은
+          price: 10000
+          genre: IT
+          publisher: Udemy
+          description: CRUD API 예제
+          id: 1
+          publishedDate: "20240929"
+          title: 유데미 백엔드 챌린지
+        page:
+          totalPages: 1
+          pageSize: 10
+          currentPage: 1
+          totalBooks: 1
+      properties:
+        books:
+          items:
+            $ref: '#/components/schemas/_books_get_200_response_data_books_inner'
+          title: books
+          type: array
+        page:
+          $ref: '#/components/schemas/_books_get_200_response_data_page'
+      title: _books_get_200_response_data
+      type: object
+    _books__bookId__put_request:
+      properties:
+        title:
+          example: 유데미 백엔드 챌린지2
+          title: title
+          type: string
+        author:
+          example: che
+          title: author
+          type: string
+        publishedDate:
+          example: "20240930"
+          title: publishedDate
+          type: string
+        publisher:
+          example: 유데미
+          title: publisher
+          type: string
+        price:
+          example: 20000
+          title: price
+          type: number
+        genre:
+          example: Web
+          title: genre
+          type: string
+        description:
+          example: CRUD API specification
+          title: description
+          type: string
+      title: _books__bookId__put_request
+      type: object
+    _books_post_400_response_error:
+      example:
+        code: BOOK_CREATION_FAILED
+        message: Failed to create book information
+      properties:
+        code:
+          example: BOOK_CREATION_FAILED
+          title: code
+          type: string
+        message:
+          example: Failed to create book information
+          title: message
+          type: string
+      title: _books_post_400_response_error
+      type: object
+    _books_get_200_response_data_page:
+      example:
+        totalPages: 1
+        pageSize: 10
+        currentPage: 1
+        totalBooks: 1
+      properties:
+        currentPage:
+          example: 1
+          title: currentPage
+          type: number
+        totalPages:
+          example: 1
+          title: totalPages
+          type: number
+        totalBooks:
+          example: 1
+          title: totalBooks
+          type: number
+        pageSize:
+          example: 10
+          title: pageSize
+          type: number
+      title: _books_get_200_response_data_page
+      type: object
+    _books_post_request:
+      properties:
+        title:
+          description: 책 이름
+          example: 유데미 백엔드 챌린지
+          title: title
+          type: string
+        author:
+          description: 저자
+          example: 최하은
+          title: author
+          type: string
+        publishedDate:
+          description: 출판일
+          example: "20240929"
+          pattern: "^[0-9]{4}[0-1][0-9][0-3][0-9]$"
+          title: publishedDate
+          type: string
+        publisher:
+          description: 출판사
+          example: Udemy
+          title: publisher
+          type: string
+        price:
+          description: 가격
+          example: 10000
+          title: price
+          type: number
+        genre:
+          description: 책 장르
+          example: IT
+          title: genre
+          type: string
+        description:
+          description: 책 설명
+          example: CRUD API 예제
+          title: description
+          type: string
+      required:
+      - author
+      - title
+      title: _books_post_request
+      type: object
+    _books__bookId__delete_200_response:
+      example:
+        status: 200
+      properties:
+        status:
+          example: 200
+          title: status
+          type: number
+      title: _books__bookId__delete_200_response
+      type: object
+    _books_post_201_response:
+      example:
+        data:
+          author: 최하은
+          price: 10000
+          genre: IT
+          publisher: Udemy
+          description: CRUD API 예제
+          id: 1
+          publishedDate: "20240929"
+          title: 유데미 백엔드 챌린지
+        status: 201
+      properties:
+        status:
+          example: 201
+          title: status
+          type: number
+        data:
+          $ref: '#/components/schemas/_books_get_200_response_data_books_inner'
+      title: _books_post_201_response
+      type: object
+    _books__bookId__put_400_response_error:
+      example:
+        code: BOOK_UPDATE_INVALID_DATA
+        message: Invalid input data
+        status: 400
+      properties:
+        status:
+          example: 400
+          title: status
+          type: number
+        code:
+          example: BOOK_UPDATE_INVALID_DATA
+          title: code
+          type: string
+        message:
+          example: Invalid input data
+          title: message
+          type: string
+      title: _books__bookId__put_400_response_error
+      type: object
+    _books_get_200_response_data_books_inner:
+      example:
+        author: 최하은
+        price: 10000
+        genre: IT
+        publisher: Udemy
+        description: CRUD API 예제
+        id: 1
+        publishedDate: "20240929"
+        title: 유데미 백엔드 챌린지
+      properties:
+        id:
+          example: 1
+          title: id
+          type: number
+        title:
+          example: 유데미 백엔드 챌린지
+          title: title
+          type: string
+        author:
+          example: 최하은
+          title: author
+          type: string
+        publishedDate:
+          example: "20240929"
+          title: publishedDate
+          type: string
+        publisher:
+          example: Udemy
+          title: publisher
+          type: string
+        price:
+          example: 10000
+          title: price
+          type: number
+        genre:
+          example: IT
+          title: genre
+          type: string
+        description:
+          example: CRUD API 예제
+          title: description
+          type: string
+      title: _books_get_200_response_data_books_inner
+      type: object
+    _books__bookId__put_200_response_data:
+      example:
+        author: che
+        price: 20000
+        genre: Web
+        publisher: 유데미
+        description: CRUD API specification
+        id: 1
+        publishedDate: "20240930"
+        title: 유데미 백엔드 챌린지2
+      properties:
+        id:
+          example: 1
+          title: id
+          type: number
+        title:
+          example: 유데미 백엔드 챌린지2
+          title: title
+          type: string
+        author:
+          example: che
+          title: author
+          type: string
+        publishedDate:
+          example: "20240930"
+          title: publishedDate
+          type: string
+        publisher:
+          example: 유데미
+          title: publisher
+          type: string
+        price:
+          example: 20000
+          title: price
+          type: number
+        genre:
+          example: Web
+          title: genre
+          type: string
+        description:
+          example: CRUD API specification
+          title: description
+          type: string
+      title: _books__bookId__put_200_response_data
+      type: object
+    _books__bookId__get_200_response:
+      example:
+        data:
+          author: 최하은
+          price: 10000
+          genre: IT
+          publisher: Udemy
+          description: CRUD API 예제
+          id: 1
+          publishedDate: "20240929"
+          title: 유데미 백엔드 챌린지
+        status: 200
+      properties:
+        status:
+          example: 200
+          title: status
+          type: number
+        data:
+          $ref: '#/components/schemas/_books_get_200_response_data_books_inner'
+      title: _books__bookId__get_200_response
+      type: object
+    _books__bookId__put_400_response:
+      example:
+        error:
+          code: BOOK_UPDATE_INVALID_DATA
+          message: Invalid input data
+          status: 400
+      properties:
+        error:
+          $ref: '#/components/schemas/_books__bookId__put_400_response_error'
+      title: _books__bookId__put_400_response
+      type: object
+    _books_get_200_response:
+      example:
+        data:
+          books:
+          - author: 최하은
+            price: 10000
+            genre: IT
+            publisher: Udemy
+            description: CRUD API 예제
+            id: 1
+            publishedDate: "20240929"
+            title: 유데미 백엔드 챌린지
+          - author: 최하은
+            price: 10000
+            genre: IT
+            publisher: Udemy
+            description: CRUD API 예제
+            id: 1
+            publishedDate: "20240929"
+            title: 유데미 백엔드 챌린지
+          page:
+            totalPages: 1
+            pageSize: 10
+            currentPage: 1
+            totalBooks: 1
+        status: 200
+      properties:
+        status:
+          example: 200
+          title: status
+          type: number
+        data:
+          $ref: '#/components/schemas/_books_get_200_response_data'
+      title: _books_get_200_response
+      type: object
+    _books_get_500_response_error:
+      example:
+        code: LIST_RETRIEVAL_FAILED
+        message: Failed to retrieve the list
+        status: 500
+      properties:
+        status:
+          example: 500
+          title: status
+          type: number
+        code:
+          example: LIST_RETRIEVAL_FAILED
+          title: code
+          type: string
+        message:
+          example: Failed to retrieve the list
+          title: message
+          type: string
+      title: _books_get_500_response_error
+      type: object
+    _books__bookId__put_200_response:
+      example:
+        data:
+          author: che
+          price: 20000
+          genre: Web
+          publisher: 유데미
+          description: CRUD API specification
+          id: 1
+          publishedDate: "20240930"
+          title: 유데미 백엔드 챌린지2
+        status: 200
+      properties:
+        status:
+          example: 200
+          title: status
+          type: number
+        data:
+          $ref: '#/components/schemas/_books__bookId__put_200_response_data'
+      title: _books__bookId__put_200_response
+      type: object
+    _books_post_400_response:
+      example:
+        error:
+          code: BOOK_CREATION_FAILED
+          message: Failed to create book information
+        status: 400
+      properties:
+        status:
+          example: 400
+          title: status
+          type: number
+        error:
+          $ref: '#/components/schemas/_books_post_400_response_error'
+      title: _books_post_400_response
+      type: object
